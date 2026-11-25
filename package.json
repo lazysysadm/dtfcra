@@ -25,7 +25,8 @@
     "db:studio": "drizzle-kit studio",
     "auth:generate": "better-auth generate --config src/server/auth/index.ts --output src/server/db/auth-schema.ts --yes",
     "auth:reset-password": "node --env-file-if-exists=.env --import tsx scripts/reset-password.ts",
-    "auth:create-user": "node --env-file-if-exists=.env --import tsx scripts/create-user.ts"
+    "auth:create-user": "node --env-file-if-exists=.env --import tsx scripts/create-user.ts",
+    "licenses:notices": "node --import tsx scripts/generate-third-party-notices.ts"
   },
   "dependencies": {
     "@better-auth/passkey": "1.7.7",

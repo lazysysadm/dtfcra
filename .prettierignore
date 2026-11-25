@@ -4,3 +4,4 @@ pnpm-lock.yaml
 src/server/db/migrations/
 src/server/db/auth-schema.ts
 coverage/
+THIRD-PARTY-NOTICES.md

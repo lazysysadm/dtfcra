@@ -1,0 +1,1 @@
+ALTER TABLE "mission" ADD COLUMN "tjm_cents" integer DEFAULT 0 NOT NULL;

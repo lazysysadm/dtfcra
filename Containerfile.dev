@@ -1,0 +1,11 @@
+# Image de DEV uniquement (tests, build, lint en conteneur — rien sur l'OS hôte).
+# L'image de production multi-stage est livrée en phase 6 (Containerfile).
+FROM docker.io/library/node:26-alpine
+
+RUN npm install -g pnpm@12.23.0
+
+# Cache pnpm persistant monté depuis le dossier de données (DTFCRA_DATA_DIR)/pnpm-store.
+ENV npm_config_store_dir=/pnpm-store
+
+WORKDIR /app
+CMD ["sh"]

@@ -1,0 +1,72 @@
+# Production — compatible Podman (podman-compose) et Docker Compose.
+# TLS : géré par le reverse proxy en amont (Caddy/Traefik/Nginx). Renseigner
+# TRUSTED_PROXY (IP/CIDR du proxy) pour la vraie IP client (audit, rate limit).
+services:
+  db:
+    image: docker.io/library/postgres:18-alpine
+    environment:
+      POSTGRES_USER: dtfcra
+      POSTGRES_DB: dtfcra
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+    volumes:
+      - dtfcra_pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dtfcra -d dtfcra"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    restart: unless-stopped
+
+  migrate:
+    image: local/dtfcra:latest
+    build: .
+    command: ["node", "--import", "tsx", "scripts/migrate.ts"]
+    environment:
+      DATABASE_URL: postgresql://dtfcra:${POSTGRES_PASSWORD}@db:5432/dtfcra
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  app:
+    image: local/dtfcra:latest
+    build: .
+    environment:
+      DATABASE_URL: postgresql://dtfcra:${POSTGRES_PASSWORD}@db:5432/dtfcra
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?set BETTER_AUTH_SECRET in .env}
+      APP_URL: ${APP_URL:-http://127.0.0.1:3000}
+      ALLOW_SIGNUP: ${ALLOW_SIGNUP:-false}
+      TRUSTED_PROXY: ${TRUSTED_PROXY:-}
+      ALLOW_NO_TRUSTED_PROXY: ${ALLOW_NO_TRUSTED_PROXY:-false}
+      ALLOW_INSECURE_APP_URL: ${ALLOW_INSECURE_APP_URL:-false}
+      UPLOAD_DIR: /app/uploads
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    volumes:
+      - dtfcra_uploads:/app/uploads
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 256
+    mem_limit: 1g
+    restart: unless-stopped
+
+volumes:
+  dtfcra_pgdata:
+  dtfcra_uploads:

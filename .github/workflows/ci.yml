@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    container:
+      image: node:26-alpine
+    services:
+      db:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: dtfcra
+          POSTGRES_PASSWORD: dtfcra_ci
+          POSTGRES_DB: dtfcra
+        options: >-
+          --health-cmd "pg_isready -U dtfcra -d dtfcra"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 12
+    env:
+      DATABASE_URL: postgresql://dtfcra:dtfcra_ci@db:5432/dtfcra
+      BETTER_AUTH_SECRET: ci_secret_0123456789abcdef0123456789abcdef
+      APP_URL: http://127.0.0.1:3000
+      NODE_ENV: test
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pnpm
+        run: npm install -g pnpm@12.23.0
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Format check
+        run: pnpm format:check
+      - name: Lint
+        run: pnpm lint
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Apply migrations
+        run: pnpm db:migrate
+      - name: Tests (unit + integration)
+        run: pnpm test
+      - name: Build
+        run: NODE_ENV=production pnpm build
+      - name: Audit (production deps)
+        run: pnpm audit --prod --audit-level=high

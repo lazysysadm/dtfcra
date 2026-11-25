@@ -1,0 +1,23 @@
+# Base de données de dev uniquement (pas de Mailpit : dtfcra n'envoie aucun email).
+# Le poste de dev utilise scripts/dev-env.sh (commandes podman directes, données
+# dans DTFCRA_DATA_DIR) ; ce fichier est l'équivalent pour podman-compose /
+# docker compose.
+services:
+  db:
+    image: docker.io/library/postgres:18-alpine
+    environment:
+      POSTGRES_USER: dtfcra
+      POSTGRES_DB: dtfcra
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+    # PostgreSQL 18+ : montage sur /var/lib/postgresql (layout pg_ctlcluster,
+    # données dans un sous-dossier 18/docker — voir docker-library/postgres#1259).
+    volumes:
+      - dtfcra_pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dtfcra -d dtfcra"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+volumes:
+  dtfcra_pgdata:

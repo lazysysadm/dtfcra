@@ -1,0 +1,3 @@
+ALTER TABLE "mission" ADD CONSTRAINT "mission_unit_check" CHECK ("mission"."unit" in ('day', 'hour'));--> statement-breakpoint
+ALTER TABLE "mission" ADD CONSTRAINT "mission_status_check" CHECK ("mission"."status" in ('active', 'archived'));--> statement-breakpoint
+ALTER TABLE "timesheet_entry" ADD CONSTRAINT "timesheet_entry_type_check" CHECK ("timesheet_entry"."type" in ('worked', 'remote', 'onsite', 'on_call', 'leave', 'unavailable'));

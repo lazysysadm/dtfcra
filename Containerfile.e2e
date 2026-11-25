@@ -1,0 +1,11 @@
+# Image E2E : dev + Chromium système Alpine (Playwright via executablePath).
+# Rien sur l'OS hôte.
+FROM local/dtfcra-dev:26
+RUN apk add --no-cache \
+    chromium nss freetype harfbuzz ca-certificates ttf-freefont libstdc++ \
+    libx11 libxcomposite libxdamage libxext libxfixes libxrandr mesa-gbm \
+    alsa-lib at-spi2-core cups-libs libdrm libxcb libxkbcommon pango cairo
+RUN npm install -g @playwright/test@1.65.1
+ENV PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium-browser
+WORKDIR /app
+CMD ["sh"]

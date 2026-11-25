@@ -1,0 +1,1 @@
+ALTER TABLE "freelancer_profile" ADD COLUMN "consultant_name" text;

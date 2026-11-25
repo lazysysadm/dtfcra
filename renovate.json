@@ -1,0 +1,22 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "rangeStrategy": "pin",
+  "packageRules": [
+    {
+      "description": "Cahier des charges : Drizzle API stable 0.x, pas la 1.0 RC",
+      "matchPackageNames": ["drizzle-orm"],
+      "allowedVersions": "<1.0.0"
+    },
+    {
+      "description": "Better Auth 1.7.7+ (correctifs de sécurité), plage 1.7.x",
+      "matchPackageNames": ["better-auth", "@better-auth/passkey"],
+      "allowedVersions": ">=1.7.7 <1.8.0"
+    },
+    {
+      "description": "Cahier des charges : TypeScript 5.x strict",
+      "matchPackageNames": ["typescript"],
+      "allowedVersions": "<6.0.0"
+    }
+  ]
+}

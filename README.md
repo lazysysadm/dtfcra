@@ -1,5 +1,15 @@
 # dtfcra
 
+[![CI](https://github.com/lazysysadm/dtfcra/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/lazysysadm/dtfcra/actions/workflows/ci.yml)
+[![Licence MIT](https://img.shields.io/github/license/lazysysadm/dtfcra)](LICENSE)
+[![Dernier commit](https://img.shields.io/github/last-commit/lazysysadm/dtfcra)](https://github.com/lazysysadm/dtfcra/commits/main)
+![Node >= 26](https://img.shields.io/badge/node-%3E%3D26-339933?logo=nodedotjs&logoColor=white)
+![Next.js 16](https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs&logoColor=white)
+![React 19](https://img.shields.io/badge/React-19-149ECA?logo=react&logoColor=white)
+![TypeScript strict](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)
+![PostgreSQL 18](https://img.shields.io/badge/PostgreSQL-18-4169E1?logo=postgresql&logoColor=white)
+![Podman](https://img.shields.io/badge/d%C3%A9ploiement-Podman-892CA0?logo=podman&logoColor=white)
+
 Application web **auto-hébergée** de **CRA (compte rendu d'activité) / timesheets** pour
 freelances IT en régie. Multi-utilisateurs, isolation stricte des données par compte.
 

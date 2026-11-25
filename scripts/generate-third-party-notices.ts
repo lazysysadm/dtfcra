@@ -3,6 +3,7 @@
 import { execSync } from "node:child_process";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import { format } from "prettier";
 
 interface Pkg {
   name: string;
@@ -85,7 +86,7 @@ LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.`;
 
-function main() {
+async function main() {
   const raw = execSync("pnpm licenses list --prod --json", {
     encoding: "utf8",
     maxBuffer: 64 * 1024 * 1024,
@@ -158,8 +159,9 @@ function main() {
 
   out.push(`---`);
   out.push(`Total production packages: ${total}.`);
-  writeFileSync("THIRD-PARTY-NOTICES.md", out.join("\n"));
+  const formatted = await format(out.join("\n"), { parser: "markdown" });
+  writeFileSync("THIRD-PARTY-NOTICES.md", formatted);
   console.log(`THIRD-PARTY-NOTICES.md généré (${total} paquets, ${sorted.length} licences).`);
 }
 
-main();
+void main();
